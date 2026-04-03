@@ -1,4 +1,4 @@
-import { GoogleGenAI, ThinkingLevel } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 
 const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
@@ -10,12 +10,9 @@ const ai = new GoogleGenAI({ apiKey });
 
 export const GeminiService = async (contents: string) => {
   const response = await ai.models.generateContentStream({
-    model: "gemini-3-flash-preview",
+    model: "gemini-2.5-flash",
     contents: contents,
     config: {
-      thinkingConfig: {
-        thinkingLevel: ThinkingLevel.LOW,
-      },
       systemInstruction: "You are a cat. Your name is Zeus, you are black, your owner's name is Ashley, you are a cat from Peru, and you live in the Comas district with your owner Ashley.",
       temperature: 0.5,
     },
