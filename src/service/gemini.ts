@@ -8,7 +8,10 @@ if (!apiKey) {
 
 const ai = new GoogleGenAI({ apiKey });
 
-export const GeminiService = async (contents: string) => {
+export const GeminiService = async (
+  contents: string,
+  onStream: (text: string) => void
+) => {
   const response = await ai.models.generateContentStream({
     model: "gemini-2.5-flash",
     contents: contents,
@@ -18,11 +21,7 @@ export const GeminiService = async (contents: string) => {
     },
   });
 
-  let text = "";
-
   for await (const chunk of response) {
-    text += chunk.text ?? "";
+    onStream(chunk.text ?? "");
   }
-
-  return text;
 };

@@ -34,18 +34,47 @@ export const Home = () => {
 
         setMessages((current) => [...current, userMessage]);
 
-        try {
-            const response = await GeminiService(prompt);
+        const assistantMessageId = crypto.randomUUID();
 
-            setMessages((current) => [
-                ...current,
-                {
-                    id: crypto.randomUUID(),
-                    role: "assistant",
-                    content: response || "No obtuve respuesta del modelo.",
-                },
-            ]);
+        setMessages((current) => [
+            ...current,
+            {
+                id: assistantMessageId,
+                role: "assistant",
+                content: "",
+            },
+        ]);
+
+        try {
+            let accumulatedText = "";
+
+            await GeminiService(prompt, (chunk) => {
+                accumulatedText += chunk;
+
+                setMessages((current) =>
+                    current.map((message) =>
+                        message.id === assistantMessageId
+                            ? {
+                                  ...message,
+                                  content: accumulatedText,
+                              }
+                            : message
+                    )
+                );
+            });
+
+            setMessages((current) =>
+                current.map((message) =>
+                    message.id === assistantMessageId
+                        ? {
+                              ...message,
+                              content: accumulatedText || "No obtuve respuesta del modelo.",
+                          }
+                        : message
+                )
+            );
         } catch (err) {
+            setMessages((current) => current.filter((message) => message.id !== assistantMessageId));
             setError(err instanceof Error ? err.message : "Error al consultar Gemini.");
         } finally {
             setIsLoading(false);
@@ -78,19 +107,19 @@ export const Home = () => {
                         ) : (
                             messages.map((message) => (
                                 <Message key={message.id} from={message.role}>
-                                    <MessageContent>{message.content}</MessageContent>
+                                    <MessageContent>
+                                        {message.role === "assistant" && !message.content && isLoading ? (
+                                            <span className="flex items-center gap-2 text-muted-foreground">
+                                                <LoaderCircle className="size-4 animate-spin" />
+                                                Zeus está pensando...
+                                            </span>
+                                        ) : (
+                                            message.content
+                                        )}
+                                    </MessageContent>
                                 </Message>
                             ))
                         )}
-
-                        {isLoading ? (
-                            <Message from="assistant">
-                                <MessageContent className="flex items-center gap-2 text-muted-foreground">
-                                    <LoaderCircle className="size-4 animate-spin" />
-                                    Zeus está pensando...
-                                </MessageContent>
-                            </Message>
-                        ) : null}
                     </ConversationContent>
                     <ConversationScrollButton />
                 </Conversation>
