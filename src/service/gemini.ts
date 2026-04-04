@@ -54,6 +54,13 @@ export const GeminiService = async (
       return;
     }
 
+    const eventTypeMatch = trimmed.match(/^event:\s*(.+)$/m);
+    const eventType = eventTypeMatch?.[1]?.trim();
+
+    if (eventType === "done") {
+      return;
+    }
+
     const dataLines = trimmed
       .split("\n")
       .filter((line) => line.startsWith("data: "))
@@ -73,12 +80,12 @@ export const GeminiService = async (
         onStream(parsed.text);
         return;
       }
+
+      return;
     } catch {
       onStream(payload);
       return;
     }
-
-    onStream(payload);
   };
 
   try {
@@ -105,12 +112,6 @@ export const GeminiService = async (
 
     if (buffer) {
       emitEvent(buffer);
-    }
-
-    const remainingText = decoder.decode();
-
-    if (remainingText) {
-      emitEvent(remainingText);
     }
   } finally {
     reader.releaseLock();
