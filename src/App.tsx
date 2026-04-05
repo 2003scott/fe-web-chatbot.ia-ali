@@ -1,15 +1,16 @@
 import { ThemeProvider } from "./contexts/use-theme-context";
 import { BrowserRouter } from "react-router-dom";
-import { Header } from "./components/shared/header";
-import { Home } from "./modules/home";
+import { AuthProvider } from "./contexts/auth-context";
+import { AppRouter } from "./modules/routers/router";
 
 function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <BrowserRouter>
-        <Header />
-        <Home />
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <AppRouter />
+        </BrowserRouter>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

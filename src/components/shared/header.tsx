@@ -1,51 +1,20 @@
-import { useEffect, useState } from "react";
 import { BotMessageSquare, LogIn, LogOut, LoaderCircle } from "lucide-react";
 import { Button } from "../ui/button";
 import { useTheme } from "@/contexts/use-theme-context";
 import { Separator } from "../ui/separator";
 import { Avatar, AvatarBadge, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { AuthService, type AuthUser } from "@/service/auth";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Header = () => {
   const { theme, setTheme } = useTheme();
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const { user, isLoading: isAuthLoading, loginWithGoogle, logout } = useAuth();
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };
 
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadUser = async () => {
-      try {
-        const currentUser = await AuthService.getCurrentUser();
-
-        if (isMounted) {
-          setUser(currentUser);
-        }
-      } finally {
-        if (isMounted) {
-          setIsAuthLoading(false);
-        }
-      }
-    };
-
-    loadUser();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const handleLogin = () => {
-    AuthService.loginWithGoogle();
-  };
-
   const handleLogout = async () => {
-    await AuthService.logout();
-    setUser(null);
+    await logout();
   };
 
   return (
@@ -101,7 +70,7 @@ export const Header = () => {
             </Button>
           </div>
         ) : (
-          <Button onClick={handleLogin} variant="default" size="sm">
+          <Button onClick={loginWithGoogle} variant="default" size="sm">
             <LogIn className="size-4" />
             Entrar con Google
           </Button>
