@@ -1,14 +1,51 @@
-import { BotMessageSquare } from "lucide-react";
+import { useEffect, useState } from "react";
+import { BotMessageSquare, LogIn, LogOut, LoaderCircle } from "lucide-react";
 import { Button } from "../ui/button";
 import { useTheme } from "@/contexts/use-theme-context";
 import { Separator } from "../ui/separator";
 import { Avatar, AvatarBadge, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { AuthService, type AuthUser } from "@/service/auth";
 
 export const Header = () => {
   const { theme, setTheme } = useTheme();
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadUser = async () => {
+      try {
+        const currentUser = await AuthService.getCurrentUser();
+
+        if (isMounted) {
+          setUser(currentUser);
+        }
+      } finally {
+        if (isMounted) {
+          setIsAuthLoading(false);
+        }
+      }
+    };
+
+    loadUser();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleLogin = () => {
+    AuthService.loginWithGoogle();
+  };
+
+  const handleLogout = async () => {
+    await AuthService.logout();
+    setUser(null);
   };
 
   return (
@@ -43,14 +80,32 @@ export const Header = () => {
           className="my-1
             "
         />
-        <Avatar>
-          <AvatarImage
-            src="https://github.com/evilrabbit.png"
-            alt="@evilrabbit"
-          />
-          <AvatarFallback>ER</AvatarFallback>
-          <AvatarBadge className="bg-green-600 dark:bg-green-800" />
-        </Avatar>
+        {isAuthLoading ? (
+          <Button variant="ghost" size="sm" disabled>
+            <LoaderCircle className="size-4 animate-spin" />
+          </Button>
+        ) : user ? (
+          <div className="flex items-center gap-2">
+            <div className="text-right leading-tight">
+              <p className="text-sm font-semibold text-foreground">{user.name}</p>
+              <p className="text-xs font-normal text-muted-foreground">{user.email}</p>
+            </div>
+            <Avatar>
+              <AvatarImage src={user.picture} alt={user.name} />
+              <AvatarFallback>{user.name.slice(0, 2).toUpperCase()}</AvatarFallback>
+              <AvatarBadge className="bg-green-600 dark:bg-green-800" />
+            </Avatar>
+            <Button onClick={handleLogout} variant="ghost" size="sm">
+              <LogOut className="size-4" />
+              Salir
+            </Button>
+          </div>
+        ) : (
+          <Button onClick={handleLogin} variant="default" size="sm">
+            <LogIn className="size-4" />
+            Entrar con Google
+          </Button>
+        )}
       </div>
     </div>
   );
