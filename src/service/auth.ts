@@ -9,11 +9,11 @@ export type AuthUser = {
 
 export const AuthService = {
   loginWithGoogle() {
-    window.location.href = `${API_BASE_URL.replace(/\/$/, "")}/api/auth/google/start`;
+    window.location.href = `${API_BASE_URL.replace(/\/$/, "")}/auth/google/start`;
   },
 
   async getCurrentUser(): Promise<AuthUser | null> {
-    const response = await fetch(`${API_BASE_URL.replace(/\/$/, "")}/api/auth/me`, {
+    const response = await fetch(`${API_BASE_URL.replace(/\/$/, "")}/auth/me`, {
       credentials: "include",
     });
 
@@ -27,7 +27,7 @@ export const AuthService = {
   },
 
   async logout() {
-    await fetch(`${API_BASE_URL.replace(/\/$/, "")}/api/auth/logout`, {
+    await fetch(`${API_BASE_URL.replace(/\/$/, "")}/auth/logout`, {
       method: "POST",
       credentials: "include",
     });
