@@ -1,5 +1,5 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
-const GEMINI_ENDPOINT = `${API_BASE_URL.replace(/\/$/, "")}/api/gemini`;
+const API_BASE_URL = import.meta.env.VITE_BE_WEB_CHATBOT_IA_ALI_BASE_URL ?? "http://localhost:8000";
+const GEMINI_ENDPOINT = `${API_BASE_URL.replace(/\/$/, "")}/gemini`;
 
 export const GeminiService = async (
   contents: string,
