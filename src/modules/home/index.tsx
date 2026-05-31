@@ -1,5 +1,5 @@
 import { Conversation, ConversationContent, ConversationEmptyState, ConversationScrollButton } from "@/components/ai-elements/conversation";
-import { Message, MessageContent } from "@/components/ai-elements/message";
+import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message";
 import { PromptInput, PromptInputBody, PromptInputFooter, PromptInputSubmit, PromptInputTextarea } from "@/components/ai-elements/prompt-input";
 import { GeminiService } from "@/service/gemini";
 import { BotMessageSquare, LoaderCircle } from "lucide-react";
@@ -114,7 +114,11 @@ export const Home = () => {
                                                 Zeus está pensando...
                                             </span>
                                         ) : (
-                                            message.content
+                                            message.role === "assistant" ? (
+                                                <MessageResponse>{message.content}</MessageResponse>
+                                            ) : (
+                                                message.content
+                                            )
                                         )}
                                     </MessageContent>
                                 </Message>
