@@ -1,5 +1,7 @@
 const API_BASE_URL = import.meta.env.VITE_BE_WEB_CHATBOT_IA_ALI_BASE_URL ?? "http://localhost:8000";
 
+console.log("Using API base URL:", API_BASE_URL);
+
 export type AuthUser = {
   id: string;
   email: string;
