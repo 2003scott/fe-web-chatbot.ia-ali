@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthService } from "@/service/auth";
+import { useAuth } from "@/hooks/use-auth";
 
 const extractToken = () => {
   const hash = window.location.hash.replace(/^#/, "");
@@ -17,18 +18,24 @@ const extractToken = () => {
 
 export const AuthCallbackModule = () => {
   const navigate = useNavigate();
+  const { refreshUser } = useAuth();
 
   useEffect(() => {
-    const token = extractToken();
+    const finalizeLogin = async () => {
+      const token = extractToken();
 
-    if (token) {
+      if (!token) {
+        navigate("/auth", { replace: true });
+        return;
+      }
+
       AuthService.saveSessionToken(token);
+      await refreshUser();
       navigate("/", { replace: true });
-      return;
-    }
+    };
 
-    navigate("/auth", { replace: true });
-  }, [navigate]);
+    void finalizeLogin();
+  }, [navigate, refreshUser]);
 
   return null;
 };
