@@ -2,9 +2,9 @@ const API_BASE_URL = import.meta.env.VITE_BE_WEB_CHATBOT_IA_ALI_BASE_URL ?? "htt
 console.log("Using API base URL:", API_BASE_URL);
 const SESSION_TOKEN_KEY = "ali_session";
 
-const getSessionToken = () => sessionStorage.getItem(SESSION_TOKEN_KEY) ?? "";
-const setSessionToken = (token: string) => sessionStorage.setItem(SESSION_TOKEN_KEY, token);
-const clearSessionToken = () => sessionStorage.removeItem(SESSION_TOKEN_KEY);
+const getSessionToken = () => localStorage.getItem(SESSION_TOKEN_KEY) ?? "";
+const setSessionToken = (token: string) => localStorage.setItem(SESSION_TOKEN_KEY, token);
+const clearSessionToken = () => localStorage.removeItem(SESSION_TOKEN_KEY);
 
 export type AuthUser = {
   id: string;
