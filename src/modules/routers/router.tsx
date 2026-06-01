@@ -3,6 +3,7 @@ import { LoaderCircle } from "lucide-react";
 import { Header } from "@/components/shared/header";
 import { useAuth } from "@/hooks/use-auth";
 import { AuthModule } from "@/modules/auth";
+import { AuthCallbackModule } from "@/modules/auth/callback";
 import { Home } from "@/modules/home";
 
 const ProtectedLayout = () => {
@@ -54,6 +55,7 @@ export const AppRouter = () => {
       </Route>
       <Route element={<PublicOnlyLayout />}>
         <Route path="/auth" element={<AuthModule />} />
+        <Route path="/auth/callback" element={<AuthCallbackModule />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
